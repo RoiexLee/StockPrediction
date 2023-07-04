@@ -4,7 +4,7 @@ from xgboost import XGBRegressor
 
 from api import data, model
 
-function, symbol, output_size, datatype, api_key, features = "TIME_SERIES_DAILY_ADJUSTED", "IBM", "full", "csv", "", ["open", "close", "high", "low"]
+function, symbol, output_size, datatype, api_key, features = "TIME_SERIES_DAILY_ADJUSTED", "IBM", "full", "csv", "XG9KMRLL04F5YETS", ["open", "close", "high", "low"]
 data_raw = data.get_data(function, symbol, output_size, datatype, api_key, features)
 
 train_size = 0.8
@@ -26,6 +26,6 @@ model = XGBRegressor()
 model.load_model("./static/models/xgboost.json")
 y_pred = model.predict(x_valid)
 
-error = [mean_absolute_percentage_error(valid, pred) for valid, pred in zip(y_valid, y_pred)]
+error = [mean_absolute_percentage_error(valid_data_fit[window_size:, i], y_pred[:, i]) for i in range(len(features))]
 
 data.plot_data(features=features, pattern="fit", actual=y_valid, pred=y_pred, error=error)
