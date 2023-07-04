@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>股票预测系统</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 50px;
+            color: #000000;
+        }
+
+        #search_form {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            border-radius: 8px;
+            background-color: #ffffff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            margin-top: 50px;
+        }
+
+        label {
+            margin-right: 20px;
+            font-size: 18px;
+            color: #000000;
+        }
+
+        input[type="text"], input[type="search"], input[type="number"] {
+            font-size: 16px;
+            padding: 10px;
+            border: solid black;
+            border-radius: 0;
+            box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            width: 200px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            margin-right: 20px;
+        }
+
+        button {
+            font-size: 18px;
+            padding: 10px 20px;
+            border: none;
+            background-color: #007bff;
+            color: #ffffff;
+            border-radius: 0;
+            cursor: pointer;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            margin-right: 20px;
+        }
+
+        button:hover {
+            background-color: #0062cc;
+        }
+
+        select {
+            font-size: 16px;
+            padding: 10px;
+            border: solid black;
+            border-radius: 0;
+            background-color: #ffffff;
+            color: #000000;
+            margin-right: 20px;
+        }
+
+        option {
+            font-size: 16px;
+            padding: 10px;
+            background-color: #ffffff;
+            color: #000000;
+        }
+
+
+        .images_row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+
+        img {
+            width: 24%;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        img[src=""] {
+            opacity: 0;
+        }
+
+        img:hover {
+            opacity: 0.8;
+        }
+
+    </style>
+</head>
+
+<body>
+<h1>股票预测系统</h1>
+<div id="search_form">
+    <label for="api_key">APIKEY</label>
+    <input type="text" id="api_key" placeholder="输入 APIKEY">
+    <label for="symbol">股票名称</label>
+    <input type="search" id="symbol" placeholder="输入股票名称">
+    <button id="data" onclick="raw()">获取数据</button>
+    <label for="model_names">模型选择</label>
+    <select id="model_names">
+        <option value="LSTM">LSTM</option>
+        <option value="XGBoost">XGBoost</option>
+    </select>
+    <button id="train" onclick="fit()">训练模型</button>
+    <label for="days">预测天数</label>
+    <input type="number" id="days" min="1" max="20" step="1" placeholder="输入预测天数">
+    <button id="predict" onclick="future()">预测</button>
+</div>
+<h1 id="status">等待获取数据</h1>
+<div id="images">
+    <div class="images_row">
+        <img id="raw_open" alt="raw_open" src="">
+        <img id="raw_close" alt="raw_close" src="">
+        <img id="raw_high" alt="raw_high" src="">
+        <img id="raw_low" alt="raw_low" src="">
+    </div>
+    <div class="images_row">
+        <img id="fit_open" alt="fit_open" src="">
+        <img id="fit_close" alt="fit_close" src="">
+        <img id="fit_high" alt="fit_high" src="">
+        <img id="fit_low" alt="fit_low" src="">
+    </div>
+    <div class="images_row">
+        <img id="future_open" alt="future_open" src="">
+        <img id="future_close" alt="future_close" src="">
+        <img id="future_high" alt="future_high" src="">
+        <img id="future_low" alt="future_low" src="">
+    </div>
+</div>
+
+
+<script>
+    function raw() {
+        $.ajax({
+            type: "POST",
+            url: "/raw",
+            contentType: "application/json",
+            data: JSON.stringify({
+                "api_key": document.getElementById("api_key").value,
+                "symbol": document.getElementById("symbol").value
+            }),
+            success: function (data) {
+                const pattern = "raw";
+                const features = ["open", "close", "high", "low"];
+                for (let i = 0; i < features.length; i++) {
+                    const name = `${pattern}_${features[i]}`;
+                    document.getElementById(name).src = data[name];
+                }
+                document.getElementById("status").textContent = data["status"];
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                document.getElementById("status").textContent = JSON.parse(jqXHR.responseText)["error"];
+            }
+        });
+    }
+
+    function fit() {
+        $.ajax({
+            type: "POST",
+            url: "/fit",
+            contentType: "application/json",
+            data: JSON.stringify({
+                "model_name": document.getElementById("model_names").options[document.getElementById("model_names").selectedIndex].value
+            }),
+            success: function (data) {
+                const pattern = "fit";
+                const features = ["open", "close", "high", "low"];
+                for (let i = 0; i < features.length; i++) {
+                    const name = `${pattern}_${features[i]}`;
+                    document.getElementById(name).src = data[name];
+                }
+                document.getElementById("status").textContent = data["status"];
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                document.getElementById("status").textContent = JSON.parse(jqXHR.responseText)["error"]
+            }
+        });
+    }
+
+    function future() {
+        $.ajax({
+            type: "POST",
+            url: "/future",
+            contentType: "application/json",
+            data: JSON.stringify({
+                "days": document.getElementById("days").value
+            }),
+            success: function (data) {
+                const pattern = "future";
+                const features = ["open", "close", "high", "low", "volume"];
+                for (let i = 0; i < features.length; i++) {
+                    const name = `${pattern}_${features[i]}`;
+                    document.getElementById(name).src = "";
+                    document.getElementById(name).src = data[name];
+                }
+                document.getElementById("status").textContent = data["status"];
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                document.getElementById("status").textContent = JSON.parse(jqXHR.responseText)["error"]
+            }
+        });
+    }
+</script>
+
+</body>
+</html>
