@@ -1,6 +1,6 @@
 # StockPrediction
 
-A project that uses LSTM and XGBoost to predict stock prices.
+A project that uses LSTM and XGBoost to predict stock prices
 
 ## Table of Contents
 
