@@ -50,4 +50,4 @@ You can train your models with [train_lstm.py](./train_lstm.py) and [train_xgboo
 
 ## License
 
-GPL-3.0 © [RoiexLee](http://roiexlee.github.io)
+[GPL-3.0](./LICENSE) © [RoiexLee](http://roiexlee.github.io)
