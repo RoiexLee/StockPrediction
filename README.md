@@ -46,8 +46,7 @@ The images that are the result are stored in [static/images](./static/images)
 
 The models are stored in [static/models](./static/models)
 
-You can train your models with [train_lstm.py](./train_lstm.py) and [train_xgboost.py](./train_xgboost.py)
-
+You can train your models with [train_lstm.py](./train_lstm.py) and [train_xgboost.py](./train_xgboost.py), do not forget to fill in your APIKEY
 
 ## License
 
