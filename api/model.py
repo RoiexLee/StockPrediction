@@ -54,6 +54,7 @@ def xgboost_future(data, window_size, days, model):
     future = data[-window_size:, :]
     for i in range(days):
         x = future[i:i + window_size:, :].flatten()
-        y = model(x)
-        np.concatenate((future, y), axis=0)
+        x = np.expand_dims(x, axis=0)
+        y = model.predict(x)
+        future = np.concatenate((future, y), axis=0)
     return future

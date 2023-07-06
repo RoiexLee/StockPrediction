@@ -37,6 +37,7 @@ class Struct:
 
         # 拟合
         self.data_raw = None
+        self.model_name = None
         self.model = None
         self.data_fit = None
         self.data_input = None
@@ -132,7 +133,12 @@ def future():
         return jsonify({"error": "必须是一个整数值"}), 400
 
     struct.days = days
-    future_fit = model.lstm_future(data=struct.data_fit, model=struct.model, window_size=struct.window_size, days=struct.days)
+    if struct.model_name == "LSTM":
+        future_fit = model.lstm_future(data=struct.data_fit, model=struct.model, window_size=struct.window_size, days=struct.days)
+    elif struct.model_name == "XGBoost":
+        future_fit = model.xgboost_future(data=struct.data_fit, model=struct.model, window_size=struct.window_size, days=struct.days)
+    else:
+        return jsonify({"error": "不支持的模型"}), 400
     struct.data_future = struct.scaler.inverse_transform(future_fit)
 
     struct.predict_count += 1
