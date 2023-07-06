@@ -24,23 +24,23 @@ Then open your browser and visit [http://127.0.0.1:5000](http://127.0.0.1:5000)
 
 You can watch the home page like below
 
-![home](./resource/home.png)
+![home](res/home.png)
 
 You can apply for a new APIKEY from [alphavanage](https://www.alphavantage.co/support/#api-key)
 
 Next you just need to fill in the APIKEY and the stock name, then click the submit button
 
-![data](./resource/data.png)
+![data](res/data.png)
 
 You can choose the model you want to use, and then click the submit button
 
-![fit](./resource/fit.png)
+![fit](res/fit.png)
 
 It will show you the result of the model you choose
 
 You can also try to predict future stock prices, but frankly, it's not accurate
 
-![future](./resource/future.png)
+![future](res/future.png)
 
 The images that are the result are stored in [static/images](./static/images)
 

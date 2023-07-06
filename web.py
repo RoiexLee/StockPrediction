@@ -1,8 +1,9 @@
 import os.path
 
+import numpy as np
 from flask import Flask, request, jsonify, render_template
 from keras import models
-from sklearn.metrics import mean_absolute_percentage_error
+from sklearn.metrics import mean_squared_error
 from sklearn.preprocessing import MinMaxScaler
 from xgboost import XGBRegressor
 
@@ -106,7 +107,7 @@ def fit():
     else:
         return jsonify({"error": "不支持的模型"}), 400
 
-    struct.error = [mean_absolute_percentage_error(struct.data_raw[struct.window_size:, i], struct.data_pred[:, i]) for i in range(len(struct.features))]
+    struct.error = [np.sqrt(mean_squared_error(struct.data_raw[struct.window_size:, i], struct.data_pred[:, i])) for i in range(len(struct.features))]
 
     struct.fit_count += 1
 
