@@ -24,7 +24,7 @@ class Struct:
         self.predict_count = 0
 
         # 爬取数据
-        self.function = "TIME_SERIES_DAILY_ADJUSTED"
+        self.function = "TIME_SERIES_DAILY"
         self.symbol = None
         self.output_size = "full"
         self.datatype = "csv"

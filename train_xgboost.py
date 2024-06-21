@@ -5,7 +5,7 @@ from xgboost import XGBRegressor
 
 from api import data, model
 
-function, symbol, output_size, datatype, api_key, features = "TIME_SERIES_DAILY_ADJUSTED", "IBM", "full", "csv", "XG9KMRLL04F5YETS", ["open", "close", "high", "low"]
+function, symbol, output_size, datatype, api_key, features = "TIME_SERIES_DAILY", "IBM", "full", "csv", "YOUR_API_KEY", ["open", "close", "high", "low"]
 data_raw = data.get_data(function, symbol, output_size, datatype, api_key, features)
 
 train_size = 0.8
